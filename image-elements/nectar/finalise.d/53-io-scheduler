@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+case $DISTRO in
+    'Ubuntu'|'Debian')
+        sed -i -e 's/\(^GRUB_CMDLINE_LINUX.*\)"$/\1 elevator=noop"/' /etc/default/grub
+        update-grub
+        ;;
+    'Fedora')
+        if [ -f /boot/grub2/grub.cfg ]; then
+            sed -i -e 's/\(^GRUB_CMDLINE_LINUX.*\)"$/\1 elevator=noop"/' /etc/default/grub
+            grub2-mkconfig -o /boot/grub2/grub.cfg
+        fi
+        ;;
+esac

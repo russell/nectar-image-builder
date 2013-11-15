@@ -1,0 +1,5 @@
+#!/bin/sh
+# -*- mode: sh -*-
+
+sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu/http:\/\/mirror.aarnet.edu.au\/pub\/ubuntu\/archive\//g' /etc/apt/sources.list
+sed -i 's/http:\/\/security.ubuntu.com\/ubuntu/http:\/\/mirror.aarnet.edu.au\/pub\/ubuntu\/archive\//g' /etc/apt/sources.list

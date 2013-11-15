@@ -1,0 +1,6 @@
+#!/bin/sh
+
+install-packages git kate
+
+bash /root/Anaconda-1.8.0-Linux-x86_64.sh -b
+rm /root/Anaconda-1.8.0-Linux-x86_64.sh
