@@ -2,6 +2,9 @@
 
 set -e
 
+# If lsb_release is missing, just do nothing.
+DISTRO=`lsb_release -si` || true
+
 case $DISTRO in
     'Ubuntu'|'Debian')
         sed -i -e 's/\(^GRUB_CMDLINE_LINUX.*\)"$/\1 elevator=noop"/' /etc/default/grub
