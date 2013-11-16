@@ -10,4 +10,4 @@ export IMAGE_NAME="image-$DIB_RELEASE"
 export IMAGE_TYPE=raw
 export ELEMENTS_PATH=$DIR/image-elements:$DIR/diskimage-builder/elements
 
-./diskimage-builder/bin/disk-image-create aarnet ubuntu vm $@
+./diskimage-builder/bin/disk-image-create ubuntu vm aarnet nectar $@
