@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+echo "# Disable pc speaker
+blacklist pcspkr" > /etc/modprobe.d/blacklist.conf
+
+echo "# ACPI Hotplug support
+acpiphp
+pci_hotplug
+" >> /etc/modules

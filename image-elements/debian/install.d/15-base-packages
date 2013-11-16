@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+install-packages sudo adduser locales locales-all extlinux openssh-server linux-headers-${ARCH} linux-image-${ARCH} euca2ools file kbd
+

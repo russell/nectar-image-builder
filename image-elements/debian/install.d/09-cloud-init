@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+install-packages cloud-init cloud-utils cloud-initramfs-growroot
+
+# Add a "debian" user which is used by cloud-init by default
+adduser --gecos Debian-cloud-init-user --disabled-password --quiet debian
+
+mkdir -p /etc/sudoers.d
+echo "debian ALL = NOPASSWD: ALL" >/etc/sudoers.d/debian-cloud-init
+chmod 0440 /etc/sudoers.d/debian-cloud-init

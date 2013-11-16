@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -eu
+
+[ -n "$ARCH" ]
+[ -n "$TARGET_ROOT" ]
+
+DIB_MIRROR=${DIB_MIRROR:-http://http.debian.net/debian}
+DIB_RELEASE=${DIB_RELEASE:-wheezy}
+REQUIRED_PACKAGES="lsb-release"
+
+sudo debootstrap --verbose --arch $ARCH --include=${REQUIRED_PACKAGES} ${DIB_RELEASE} ${TARGET_ROOT} ${DIB_MIRROR}

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# These packages need to be downloaded now because otherwise the
+# temporary disk will run out of space during installation of grub.
+apt-get install --download-only --option "Dpkg::Options::=--force-confold" -y grub-pc
