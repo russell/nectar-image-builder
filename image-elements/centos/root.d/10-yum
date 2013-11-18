@@ -1,0 +1,71 @@
+#!/bin/bash
+
+set -eu
+
+[ -n "$ARCH" ]
+[ -n "$TARGET_ROOT" ]
+
+DIB_MIRROR=${DIB_MIRROR:-http://mirror.aarnet.edu.au/pub/centos/}
+DIB_RELEASE=${DIB_RELEASE:-6.4}
+
+
+case $ARCH in
+    amd64)
+        ARCH=x86_64
+        ;;
+    *)
+        echo "Unknown CentOS Arch."
+        exit 1
+        ;;
+esac
+
+case $DIB_RELEASE in
+    6.4)
+        RPM_NAME=centos-release-6-4.el6.centos.10.x86_64.rpm
+        KEY_NAME=RPM-GPG-KEY-CentOS-6
+        ;;
+    *)
+        echo "Unknown CentOS release."
+        exit 1
+        ;;
+esac
+
+CENTOS_RPM=${DIB_MIRROR}/${DIB_RELEASE}/os/${ARCH}/Packages/${RPM_NAME}
+REQUIRED_PACKAGES="yum yum-utils initscripts kernel passwd dhclient openssh-clients openssh-server sudo"
+
+# Setup basic FSTAB
+sudo mkdir -p ${TARGET_ROOT}/etc
+
+FSTAB=$(cat <<EOF
+#
+# /etc/fstab
+# Created by anaconda on Thu Aug 15 16:26:17 2013
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/vda1               /                       ext4    defaults        1 1
+tmpfs                   /dev/shm                tmpfs   defaults        0 0
+devpts                  /dev/pts                devpts  gid=5,mode=620  0 0
+sysfs                   /sys                    sysfs   defaults        0 0
+proc                    /proc                   proc    defaults        0 0
+EOF
+)
+echo $FSTAB | sudo tee ${TARGET_ROOT}/etc/fstab >/dev/null
+
+mkdir -p ${TARGET_ROOT}/var/lib/rpm
+# Required for init script installation
+touch ${TARGET_ROOT}/var/lib/random-seed
+
+sudo rpm --rebuilddb --root=${TARGET_ROOT}
+sudo rpm -i --root=${TARGET_ROOT} --nodeps ${CENTOS_RPM}
+sudo rpm --root=${TARGET_ROOT} --import ${DIB_MIRROR}/${KEY_NAME}
+
+# Setup mirror
+SAFE_URL=$(echo ${DIB_MIRROR} | sed 's/\./\\./g; s/\//\\\//g')
+sudo sed "s/http:\/\/mirror\.centos\.org\/centos/${SAFE_URL}/g;\
+s/^#baseurl/baseurl/g;\
+s/^mirrorlist/#mirrorlist/g" ${TARGET_ROOT}/etc/yum.repos.d/CentOS-Base.repo -i
+
+sudo yum install -y --installroot=${TARGET_ROOT} ${REQUIRED_PACKAGES}
+sudo yum --installroot=${TARGET_ROOT} clean all
